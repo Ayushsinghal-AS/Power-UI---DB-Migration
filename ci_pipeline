@@ -1,0 +1,22 @@
+name: DB Deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # REQUIRED for git diff
+
+      - name: Run DB Changes
+        run: |
+          docker build -t db-deploy .
+          docker run \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            db-deploy
